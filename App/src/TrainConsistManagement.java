@@ -1,19 +1,23 @@
-import java.util.HashSet;
+import java.util.LinkedList;
 
 public class TrainConsistManagement {
 
     public static void main(String[] args) {
 
-        HashSet<String> bogieIds = new HashSet<>();
+        LinkedList<String> consist = new LinkedList<>();
 
-        bogieIds.add("BG101");
-        bogieIds.add("BG102");
-        bogieIds.add("BG103");
-        bogieIds.add("BG101");
-        bogieIds.add("BG104");
-        bogieIds.add("BG102");
+        consist.add("Engine");
+        consist.add("Sleeper");
+        consist.add("AC");
+        consist.add("Cargo");
+        consist.add("Guard");
 
-        System.out.println("Unique Bogie IDs:");
-        System.out.println(bogieIds);
+        consist.add(2, "Pantry Car");
+
+        consist.removeFirst();
+        consist.removeLast();
+
+        System.out.println("Final Train Consist:");
+        System.out.println(consist);
     }
 }
