@@ -1,107 +1,62 @@
 import org.junit.jupiter.api.Test;
-import java.util.*;
+import java.util.regex.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrainConsistManagementTest {
 
-    static class Bogie {
-        String type;
-        int capacity;
-
-        Bogie(String type, int capacity) {
-            this.type = type;
-            this.capacity = capacity;
-        }
+    private boolean isValidTrainId(String trainId) {
+        return Pattern.matches("TRN-\\d{4}", trainId);
     }
 
-    private int totalCapacity(List<Bogie> bogies) {
-        return bogies.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
+    private boolean isValidCargoCode(String cargoCode) {
+        return Pattern.matches("PET-[A-Z]{2}", cargoCode);
     }
 
     @Test
-    void testReduce_TotalSeatCalculation() {
-        List<Bogie> bogies = Arrays.asList(
-                new Bogie("Sleeper", 70),
-                new Bogie("AC Chair", 60)
-        );
-
-        int result = totalCapacity(bogies);
-
-        assertEquals(130, result);
+    void testRegex_ValidTrainID() {
+        assertTrue(isValidTrainId("TRN-1234"));
     }
 
     @Test
-    void testReduce_MultipleBogiesAggregation() {
-        List<Bogie> bogies = Arrays.asList(
-                new Bogie("Sleeper", 70),
-                new Bogie("AC Chair", 60),
-                new Bogie("First Class", 50)
-        );
-
-        int result = totalCapacity(bogies);
-
-        assertEquals(180, result);
+    void testRegex_InvalidTrainIDFormat() {
+        assertFalse(isValidTrainId("TRAIN12"));
+        assertFalse(isValidTrainId("TRN12A"));
+        assertFalse(isValidTrainId("1234-TRN"));
     }
 
     @Test
-    void testReduce_SingleBogieCapacity() {
-        List<Bogie> bogies = Collections.singletonList(
-                new Bogie("Sleeper", 80)
-        );
-
-        int result = totalCapacity(bogies);
-
-        assertEquals(80, result);
+    void testRegex_ValidCargoCode() {
+        assertTrue(isValidCargoCode("PET-AB"));
     }
 
     @Test
-    void testReduce_EmptyBogieList() {
-        List<Bogie> bogies = new ArrayList<>();
-
-        int result = totalCapacity(bogies);
-
-        assertEquals(0, result);
+    void testRegex_InvalidCargoCodeFormat() {
+        assertFalse(isValidCargoCode("PET-ab"));
+        assertFalse(isValidCargoCode("PET123"));
+        assertFalse(isValidCargoCode("AB-PET"));
     }
 
     @Test
-    void testReduce_CorrectCapacityExtraction() {
-        List<Bogie> bogies = Arrays.asList(
-                new Bogie("Sleeper", 40),
-                new Bogie("AC Chair", 60)
-        );
-
-        int result = totalCapacity(bogies);
-
-        assertEquals(100, result);
+    void testRegex_TrainIDDigitLengthValidation() {
+        assertFalse(isValidTrainId("TRN-123"));
+        assertFalse(isValidTrainId("TRN-12345"));
     }
 
     @Test
-    void testReduce_AllBogiesIncluded() {
-        List<Bogie> bogies = Arrays.asList(
-                new Bogie("Sleeper", 30),
-                new Bogie("AC Chair", 40),
-                new Bogie("First Class", 50)
-        );
-
-        int result = totalCapacity(bogies);
-
-        assertEquals(120, result);
+    void testRegex_CargoCodeUppercaseValidation() {
+        assertFalse(isValidCargoCode("PET-Ab"));
+        assertFalse(isValidCargoCode("PET-aB"));
     }
 
     @Test
-    void testReduce_OriginalListUnchanged() {
-        List<Bogie> bogies = new ArrayList<>(Arrays.asList(
-                new Bogie("Sleeper", 70),
-                new Bogie("AC Chair", 60)
-        ));
+    void testRegex_EmptyInputHandling() {
+        assertFalse(isValidTrainId(""));
+        assertFalse(isValidCargoCode(""));
+    }
 
-        int originalSize = bogies.size();
-
-        int result = totalCapacity(bogies);
-
-        assertEquals(originalSize, bogies.size());
-        assertEquals(130, result);
+    @Test
+    void testRegex_ExactPatternMatch() {
+        assertFalse(isValidTrainId("TRN-1234XYZ"));
+        assertFalse(isValidCargoCode("PET-AB123"));
     }
 }
